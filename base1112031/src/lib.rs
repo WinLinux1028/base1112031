@@ -8,11 +8,21 @@ use crate::convert::{FromVecChar, ToVecChar};
 
 use std::ops::{DivAssign, Rem};
 
+/// # Examples
+/// ```
+/// use use base1112031::ToBase1112031;
+///
+/// let input = 139449924812_u64;
+/// let result: String = input.to_base1112031().unwrap();
+/// assert_eq!(result, "🇺🇦");
+/// ```
 pub trait ToBase1112031:
     Clone + TryInto<u32> + TryFrom<u32> + for<'a> DivAssign<&'a Self> + PartialOrd<Self>
 where
     for<'a> &'a Self: Rem<&'a Self, Output = Self>,
 {
+    /// # Errors
+    /// - When the input could not be converted to u32.
     fn to_base1112031<T>(mut self) -> Option<T>
     where
         T: FromVecChar,
@@ -57,7 +67,17 @@ where
 {
 }
 
+/// # Examples
+/// ```
+/// use use base1112031::FromBase1112031;
+///
+/// let input = "🇺🇦";
+/// let result: u64 = FromBase1112031::from_base1112031(input).unwrap();
+/// assert_eq!(result, 139449924812);
+/// ```
 pub trait FromBase1112031: TryFrom<BigUint> {
+    /// # Errors
+    /// - When the type specified for the output would overflow.
     fn from_base1112031<T: ToVecChar>(input: T) -> Option<Self> {
         let input = input
             .to_vec_char()
