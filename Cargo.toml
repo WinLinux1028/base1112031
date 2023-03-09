@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "base1112031",
+    "wasm_export"
+]
