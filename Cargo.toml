@@ -2,5 +2,6 @@
 
 members = [
     "base1112031",
-    "wasm_export"
+    "wasm_export",
+    "cui_command"
 ]
