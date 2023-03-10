@@ -2,7 +2,6 @@
 
 pub(crate) mod convert;
 use num_bigint::BigUint;
-use num_traits::{identities::Zero, Pow};
 
 use crate::convert::{FromVecChar, ToVecChar};
 
@@ -83,14 +82,13 @@ pub trait FromBase1112031: TryFrom<BigUint> {
             .to_vec_char()
             .into_iter()
             .rev() // 下桁から順に並び替える
-            .map(|i| i as u32) // コードポイントに変換
-            .enumerate();
+            .map(|i| i as u32); // コードポイントに変換
 
-        let mut tmp = BigUint::from(0_u8);
+        let mut exp = BigUint::from(1_u8);
         let mut result = BigUint::from(0_u8);
-        for (i, mut c) in input {
+        for mut i in input {
             // コードポイントをそれぞれ対応する値に変換
-            let convert: i32 = match c {
+            let convert: i32 = match i {
                 0x30..=0x39 => 0x30,                 // 0 to 9
                 0x61..=0x7A => 0x61 - 10,            // 10 to 35
                 0x41..=0x5A => 0x41 - 36,            // 36 to 61
@@ -105,16 +103,14 @@ pub trait FromBase1112031: TryFrom<BigUint> {
             // u32からi32を引くためにunsafeが必要
             unsafe {
                 let convert: u32 = std::mem::transmute(convert);
-                c = c.unchecked_sub(convert);
+                i = i.unchecked_sub(convert);
             }
 
-            // BigUintを使ってオーバーフローしないようにc * 1112031^iを計算してresultに足す
-            tmp += 1112031_u32;
-            tmp = c * tmp.pow(i);
-            result += &tmp;
+            // i * 1112031^nをresultに足す
+            result += &exp * i;
 
-            // 次のループのための後片付け
-            tmp.set_zero();
+            // 次のループのための処理
+            exp *= 1112031_u32;
         }
 
         result.try_into().ok()
