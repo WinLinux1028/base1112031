@@ -16,7 +16,7 @@ use std::ops::{DivAssign, Rem};
 /// assert_eq!(result, "🇺🇦");
 /// ```
 pub trait ToBase1112031:
-    Clone + TryInto<u32> + TryFrom<u32> + for<'a> DivAssign<&'a Self> + PartialOrd<Self>
+    Clone + TryInto<u32> + TryFrom<u32> + for<'a> DivAssign<&'a Self> + PartialEq<Self>
 where
     for<'a> &'a Self: Rem<&'a Self, Output = Self>,
 {
@@ -29,7 +29,7 @@ where
         let zero: Self = 0_u32.try_into().ok()?;
         let base: Self = 1112031_u32.try_into().ok()?;
         let mut result: Vec<char> = Vec::new(); // 下桁から順になる
-        while self > zero {
+        loop {
             // 1112031進数の桁を1つ生成する
             let digit: u32 = (&self % &base).try_into().ok()?;
 
@@ -52,6 +52,10 @@ where
             }
 
             self /= &base;
+
+            if self == zero {
+                break;
+            }
         }
 
         Some(FromReverseVecChar::from(result))
@@ -59,7 +63,7 @@ where
 }
 impl<T> ToBase1112031 for T
 where
-    T: Clone + TryInto<u32> + TryFrom<u32> + for<'a> DivAssign<&'a Self> + PartialOrd<Self>,
+    T: Clone + TryInto<u32> + TryFrom<u32> + for<'a> DivAssign<&'a Self> + PartialEq<Self>,
     for<'a> &'a Self: Rem<&'a Self, Output = Self>,
 {
 }
