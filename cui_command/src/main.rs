@@ -18,16 +18,40 @@ fn main() {
 
 fn to_base1112031() {
     let mut buf = String::new();
-    while stdin().read_line(&mut buf).is_ok() {
-        let input = BigUint::from_str(&buf).unwrap();
+    while let Ok(o) = stdin().read_line(&mut buf) {
+        if o == 0 {
+            break;
+        }
+
+        let buf = match buf.strip_suffix('\n') {
+            Some(s) => s,
+            None => &buf,
+        };
+        if buf.is_empty() {
+            continue;
+        }
+
+        let input = BigUint::from_str(buf).unwrap();
         println!("{}", input.to_base1112031::<String>().unwrap());
     }
 }
 
 fn to_base10() {
     let mut buf = String::new();
-    while stdin().read_line(&mut buf).is_ok() {
-        let result: BigUint = FromBase1112031::from_base1112031(buf.as_str()).unwrap();
+    while let Ok(o) = stdin().read_line(&mut buf) {
+        if o == 0 {
+            break;
+        }
+
+        let buf = match buf.strip_suffix('\n') {
+            Some(s) => s,
+            None => &buf,
+        };
+        if buf.is_empty() {
+            continue;
+        }
+
+        let result: BigUint = FromBase1112031::from_base1112031(buf).unwrap();
         println!("{}", result);
     }
 }
