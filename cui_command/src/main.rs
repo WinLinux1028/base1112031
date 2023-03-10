@@ -23,16 +23,18 @@ fn to_base1112031() {
             break;
         }
 
-        let buf = match buf.strip_suffix('\n') {
+        let input = match buf.strip_suffix('\n') {
             Some(s) => s,
             None => &buf,
         };
-        if buf.is_empty() {
+        if input.is_empty() {
             continue;
         }
 
-        let input = BigUint::from_str(buf).unwrap();
+        let input = BigUint::from_str(input).unwrap();
         println!("{}", input.to_base1112031::<String>().unwrap());
+
+        buf.clear();
     }
 }
 
@@ -43,16 +45,18 @@ fn to_base10() {
             break;
         }
 
-        let buf = match buf.strip_suffix('\n') {
+        let input = match buf.strip_suffix('\n') {
             Some(s) => s,
             None => &buf,
         };
-        if buf.is_empty() {
+        if input.is_empty() {
             continue;
         }
 
-        let result: BigUint = FromBase1112031::from_base1112031(buf).unwrap();
+        let result: BigUint = FromBase1112031::from_base1112031(input).unwrap();
         println!("{}", result);
+
+        buf.clear();
     }
 }
 
