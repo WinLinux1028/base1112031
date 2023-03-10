@@ -1,6 +1,6 @@
 [package]
 name = "base1112031"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["WinLinux1028"]
 description = "base1112031 is a way to represent numbers using all Unicode characters except ASCII control characters."

@@ -1,14 +1,15 @@
-pub trait FromVecChar {
-    fn from_vec_char(from: Vec<char>) -> Self;
+pub trait FromReverseVecChar {
+    fn from(from: Vec<char>) -> Self;
 }
-impl FromVecChar for Vec<char> {
-    fn from_vec_char(from: Vec<char>) -> Self {
+impl FromReverseVecChar for Vec<char> {
+    fn from(mut from: Vec<char>) -> Self {
+        from.reverse();
         from
     }
 }
-impl FromVecChar for String {
-    fn from_vec_char(from: Vec<char>) -> Self {
-        from.into_iter().collect()
+impl FromReverseVecChar for String {
+    fn from(from: Vec<char>) -> Self {
+        from.into_iter().rev().collect()
     }
 }
 

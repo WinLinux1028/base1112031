@@ -3,7 +3,7 @@
 pub(crate) mod convert;
 use num_bigint::BigUint;
 
-use crate::convert::{FromVecChar, ToVecChar};
+use crate::convert::{FromReverseVecChar, ToVecChar};
 
 use std::ops::{DivAssign, Rem};
 
@@ -24,21 +24,17 @@ where
     /// - When the input could not be converted to u32.
     fn to_base1112031<T>(mut self) -> Option<T>
     where
-        T: FromVecChar,
+        T: FromReverseVecChar,
     {
-        // 数値を1112031進数の桁ごとに分解する
+        let zero: Self = 0_u32.try_into().ok()?;
         let base: Self = 1112031_u32.try_into().ok()?;
-        let mut digits: Vec<u32> = Vec::new(); // 下桁から順になる
-        while self >= base {
-            digits.push((&self % &base).try_into().ok()?);
-            self /= &base;
-        }
-        digits.push(self.try_into().ok()?);
+        let mut result: Vec<char> = Vec::new(); // 下桁から順になる
+        while self > zero {
+            // 1112031進数の桁を1つ生成する
+            let digit: u32 = (&self % &base).try_into().ok()?;
 
-        // 桁をそれぞれコードポイントに変換する
-        let mut result = Vec::new();
-        for i in digits.into_iter().rev() {
-            let convert: i32 = match i {
+            // 桁をそれぞれコードポイントに変換する
+            let convert: i32 = match digit {
                 0..=9 => 0x30,             // 0 to 9
                 10..=35 => 0x61 - 10,      // a to z
                 36..=61 => 0x41 - 36,      // A to Z
@@ -52,11 +48,13 @@ where
             // u32とi32を足すためにunsafeが必要
             unsafe {
                 let convert: u32 = std::mem::transmute(convert);
-                result.push(char::from_u32_unchecked(i.unchecked_add(convert)));
+                result.push(char::from_u32_unchecked(digit.unchecked_add(convert)));
             }
+
+            self /= &base;
         }
 
-        Some(FromVecChar::from_vec_char(result))
+        Some(FromReverseVecChar::from(result))
     }
 }
 impl<T> ToBase1112031 for T
