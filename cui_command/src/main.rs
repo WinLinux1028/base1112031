@@ -1,3 +1,6 @@
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 use std::{io::stdin, str::FromStr};
 
 use base1112031::{FromBase1112031, ToBase1112031};

@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num-bigint = "0.4"
 base1112031 = { path = "../base1112031" }
+mimalloc = { version = "0.1", default-features = false }
+num-bigint = "0.4"
